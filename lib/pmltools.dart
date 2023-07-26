@@ -16,7 +16,8 @@ class Brocabrac {
   String brocNbExposants = "";
   String brocStarNbExposants = "*";
   String brocStarRevenu = "€";
-  String brocStarBarycentre = "+"; // plus i ly a de + concentration
+  String brocLove = "";
+  String brocStarBarycentre = ""; // plus i ly a de + concentration
   String brocStarLastColor = "";
   String brocDejaVu = "";
   int brocFromCenter = 0;

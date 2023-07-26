@@ -44,8 +44,8 @@ class ManagerPML extends StatefulWidget {
 }
 
 class _ManagerPMLState extends State<ManagerPML> {
-  var versionNum = '26 Juillet 07:00';
-  var pifoMetre = 1.25;
+  var versionNum = '26 Juillet 12:00';
+  var pifoMetre = 1.27;
   int nbStepAsync = 0; // Eviter de Boucler
   String dateSelected = "2023-07-07";
   String dateSelectedPrev = "2023-07-07";
@@ -216,7 +216,7 @@ class _ManagerPMLState extends State<ManagerPML> {
                 ),
                 IconButton(
                   // unused
-                  icon: const Icon(Icons.heart_broken_rounded),
+                  icon: const Icon(Icons.car_rental),
 
                   iconSize: cobracIconSize,
                   color: Colors.deepOrange,
@@ -584,7 +584,7 @@ class _ManagerPMLState extends State<ManagerPML> {
         _brocky.brocStarBarycentre = "";
 
         for (int i = 1; i <= nbdens; i++) {
-          _brocky.brocStarBarycentre = _brocky.brocStarBarycentre + "❤";
+          _brocky.brocStarBarycentre = _brocky.brocStarBarycentre + "🚓";
         }
       });
 
@@ -614,7 +614,7 @@ class _ManagerPMLState extends State<ManagerPML> {
         }
 
         setState(() {
-          _brocky.brocStarBarycentre = "❤" * nbdens;
+          _brocky.brocStarBarycentre = "🚓" * nbdens;
         });
       }
     }
@@ -825,7 +825,7 @@ class _ManagerPMLState extends State<ManagerPML> {
     return ("OK");
   }
 
-  Expanded getListView() {
+  Expanded getListViewPML() {
     var listView = ListView.builder(
         controller: ScrollController(),
         itemCount: brocanteBrocabrac.length,
@@ -841,7 +841,6 @@ class _ManagerPMLState extends State<ManagerPML> {
                     " km " +
                     brocanteBrocabrac[index].brocStarBarycentre
 
-                //brocanteBrocabrac[index].brocInside.toString() +
                 ,
                 style: TextStyle(
                     fontSize: 12,
@@ -876,6 +875,7 @@ class _ManagerPMLState extends State<ManagerPML> {
                   ),
                 );
               },
+
               onTap: () {
                 setState(() {
                   if (brocanteBrocabrac[index].brocEventStatus == "OK") {
@@ -885,10 +885,95 @@ class _ManagerPMLState extends State<ManagerPML> {
                   }
                 });
               });
+
         });
 
     return Expanded(child: listView);
   }
+  Expanded getListView() {
+    var listView = ListView.builder(
+      controller: ScrollController(),
+      itemCount: brocanteBrocabrac.length,
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () {
+            setState(() {
+              if (brocanteBrocabrac[index].brocEventStatus == "OK") {
+                centralCommune = brocanteBrocabrac[index].brocLocality;
+                getCurrentCommmune(); // Step N°1 Position Centre
+                computeNewDistanceFromSelect();
+              }
+            });
+          },
+          onLongPress: () {
+            setState(() {
+              centralCommune = brocanteBrocabrac[index].brocLocality;
+            });
+            Brocabrac thisBrocabrac = getCurrentBrocabrac(centralCommune);
+            GoToMarket _mapTrip; // Bidon  Fake
+
+            ManageCobrac manageCobrac =
+            ManageCobrac(brocanteBrocabrac, _mapTrip, thisBrocabrac);
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailBroc(),
+                settings: RouteSettings(
+                  // arguments: centralCommune,
+                  arguments: manageCobrac,
+                ),
+              ),
+            );
+          },
+          onDoubleTap: () {
+            setState(() {
+              if (brocanteBrocabrac[index].brocEventStatus == "OK") {
+
+                if (brocanteBrocabrac[index].brocLove== "❤") {
+                  brocanteBrocabrac[index].brocLove="";
+              }
+                else
+                {
+                  brocanteBrocabrac[index].brocLove="❤";
+                }
+              }
+            });
+          },
+          child: ListTile(
+            title: Text(
+              brocanteBrocabrac[index].brocPostal +
+                  " : " +
+                  brocanteBrocabrac[index].brocLocality +
+                  " à " +
+                  brocanteBrocabrac[index].brocFromCenter.toString() +
+                  " km " +
+                  brocanteBrocabrac[index].brocStarBarycentre + " "+ brocanteBrocabrac[index].brocLove,
+              style: TextStyle(
+                fontSize: 12,
+                fontFamily: 'Serif',
+                color: colorBrocante[index],
+              ),
+            ),
+            subtitle: Text(
+              brocanteBrocabrac[index].brocStarNbExposants +
+                  " Expo " +
+                  brocanteBrocabrac[index].brocName,
+              style: TextStyle(
+                fontSize: 12,
+                fontFamily: 'Serif',
+                color: Colors.black,
+              ),
+            ),
+            dense: true,
+          ),
+        );
+      },
+    );
+
+    return Expanded(child: listView);
+  }
+
 
   //********************* *****************************
   Expanded getListViewReduce() {
